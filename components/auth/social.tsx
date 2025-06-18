@@ -9,6 +9,7 @@ export const Social = () => {
     return (
         <div className="flex items-center w-full gap-x-2">
             <Button
+                aria-label="Continue with Google"
                 size="lg"
                 className="w-full"
                 variant="outline"
@@ -17,6 +18,7 @@ export const Social = () => {
                 <FcGoogle className="size-5" />
             </Button>
             <Button
+                aria-label="Continue with Github"
                 size="lg"
                 className="w-full"
                 variant="outline"
