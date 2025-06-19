@@ -1,8 +1,8 @@
 "use client";
 
 import { z } from "zod";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useState, useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Input } from "@/components/ui/input";
@@ -25,7 +25,9 @@ import { register } from "@/actions/register";
 export const RegisterForm = () => {
     const [error, setError] = useState<string | undefined>("");
     const [success, setSuccess] = useState<string | undefined>("");
-    const [isPending, startTransition] = useTransition();
+    // useTransition didn't support asynchronous functions before React 19.
+    // const [isPending, startTransition] = useTransition();
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const form = useForm<z.infer<typeof RegisterSchema>>({
         resolver: zodResolver(RegisterSchema),
@@ -40,13 +42,22 @@ export const RegisterForm = () => {
         setError("");
         setSuccess("");
 
-        startTransition(() => {
-            register(values)
-                .then((data) => {
-                    setError(data.error);
-                    setSuccess(data.success);
-                });
-        });
+        // startTransition(() => {
+        //     register(values)
+        //         .then((data) => {
+        //             setError(data.error);
+        //             setSuccess(data.success);
+        //         });
+        // });
+
+        setIsSubmitting(true);
+        register(values)
+            .then((data) => {
+                setError(data.error);
+                setSuccess(data.success);
+            })
+            .catch(() => setError("Something went wrong"))
+            .finally(() => setIsSubmitting(false));
     };
 
     return (
@@ -71,7 +82,7 @@ export const RegisterForm = () => {
                                     <FormControl>
                                         <Input
                                             {...field}
-                                            disabled={isPending}
+                                            disabled={isSubmitting}
                                             placeholder="John Doe"
                                         />
                                     </FormControl>
@@ -88,7 +99,7 @@ export const RegisterForm = () => {
                                     <FormControl>
                                         <Input
                                             {...field}
-                                            disabled={isPending}
+                                            disabled={isSubmitting}
                                             placeholder="john.doe@example.com"
                                             type="email"
                                         />
@@ -106,7 +117,7 @@ export const RegisterForm = () => {
                                     <FormControl>
                                         <Input
                                             {...field}
-                                            disabled={isPending}
+                                            disabled={isSubmitting}
                                             placeholder="******"
                                             type="password"
                                         />
@@ -120,7 +131,7 @@ export const RegisterForm = () => {
                     <FormSuccess message={success} />
                     <Button
                         type="submit"
-                        disabled={isPending}
+                        disabled={isSubmitting}
                         className="w-full"
                     >
                         Create an account
