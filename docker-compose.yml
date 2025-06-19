@@ -1,0 +1,13 @@
+services:
+  db:
+    image: postgres:alpine
+    restart: always
+    volumes:
+      - ./database/db:/var/lib/postgresql/data
+    ports:
+      - 5439:5432
+
+    environment:
+      - POSTGRES_DB=auth-tutorial
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
